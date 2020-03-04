@@ -33,10 +33,17 @@ const show = {
     }
 };
 
+const checkEmpty = (element) => element.className==='';
+
 const fire = (event) => {
     const {target} = event;
-    show.miss(target);
-    play.updateData = 'shot';
+    if(checkEmpty(target)){
+        show.miss(target);
+        play.updateData = 'shot';
+    }
+    else{
+        console.log('this cell filled')
+    }
 
 };
 
