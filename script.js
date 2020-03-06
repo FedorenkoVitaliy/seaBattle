@@ -5,6 +5,29 @@ const dead = document.getElementById('dead');
 const enemy = document.getElementById('enemy');
 const again = document.getElementById('again');
 
+
+const game = {
+    ships: [
+        {
+          location:['26', '36', '46', '56'],
+          hit:['', '', '', '']
+        },
+        {
+          location:['11', '12', '13'],
+          hit:['', '', '',]
+        },
+        {
+          location:['69', '79'],
+          hit:['', '',]
+        },
+        {
+          location:['32',],
+          hit:['',]
+        }
+    ],
+    shipCount: '4'
+};
+
 const play = {
     record: 0,
     shot: 0,
@@ -23,11 +46,15 @@ const play = {
 };
 
 const show = {
-    hit() {},
+    hit(elem) {
+        this.changeClass(elem, 'hit');
+    },
     miss(elem) {
         this.changeClass(elem, 'miss');
     },
-    death() {},
+    dead(elem) {
+        this.changeClass(elem, 'dead');
+    },
     changeClass(elem, value){
         elem.className = value;
     }
@@ -35,15 +62,36 @@ const show = {
 
 const checkEmpty = (element) => element.className==='';
 
-const fire = (event) => {
-    const {target} = event;
-    if(checkEmpty(target)){
-        show.miss(target);
-        play.updateData = 'shot';
+const fire = ({target}) => {
+    if(!checkEmpty(target) || target.tagName !== 'TD') {
+        return;
     }
-    else{
-        console.log('this cell filled')
-    }
+    show.miss(target);
+    play.updateData = 'shot';
+    game.ships.forEach(ship => {
+        const idx = ship.location.indexOf(target.id);
+        if(idx>-1){
+            show.hit(target);
+            play.updateData = 'hit';
+            ship.hit[idx] = 'x';
+        }
+        const life = ship.hit.indexOf('');
+        console.log(life);
+        if(life < 0){
+            play.updateData = 'dead';
+            for(const id of ship.location){
+                show.dead(document.getElementById(id));
+            }
+        }
+        /*if(ship.hit.every(deck => deck==='x')){
+            play.updateData = 'dead';
+            ship.location.forEach(id => show.dead(document.getElementById(id)));
+            game.shipCount--;
+            if(game.shipCount<1){
+                alert('Game Finish');
+            }
+        }*/
+    });
 
 };
 
