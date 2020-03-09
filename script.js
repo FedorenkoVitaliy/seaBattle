@@ -4,6 +4,7 @@ const hit = document.getElementById('hit');
 const dead = document.getElementById('dead');
 const enemy = document.getElementById('enemy');
 const again = document.getElementById('again');
+const cells = document.querySelectorAll('td');
 
 
 const game = {
@@ -57,6 +58,9 @@ const show = {
     dead(elem) {
         this.changeClass(elem, 'dead');
     },
+    clear(elem) {
+        this.changeClass(elem, '');
+    },
     changeClass(elem, value){
         elem.className = value;
     }
@@ -96,9 +100,18 @@ const fire = ({target}) => {
     });
 };
 
+const againHandler = () => {
+  play.shot = 0;
+  play.hit = 0;
+  play.dead = 0;
+  cells.forEach(cell => show.clear(cell));
+  play.render();
+};
+
 const init = () => {
     play.render();
-    enemy.addEventListener('click', fire)
+    enemy.addEventListener('click', fire);
+    again.addEventListener('click', againHandler)
 };
 
 init();
