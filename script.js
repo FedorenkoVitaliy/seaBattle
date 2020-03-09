@@ -8,28 +8,31 @@ const again = document.getElementById('again');
 
 const game = {
     ships: [
-        {
+        /*{
           location:['26', '36', '46', '56'],
           hit:['', '', '', '']
+        },*/
+        /*{
+            location:['11', '12', '13'],
+            hit:['', '', '',]
         },
         {
-          location:['11', '12', '13'],
-          hit:['', '', '',]
+            location:['69', '79'],
+            hit:['', '',]
+        },*/
+        {
+            location:['00'],
+            hit:['',]
         },
         {
-          location:['69', '79'],
-          hit:['', '',]
-        },
-        {
-          location:['32',],
-          hit:['',]
+            location:['01'],
+            hit:['',]
         }
     ],
-    shipCount: '4'
+    shipCount: 2
 };
-
 const play = {
-    record: 0,
+    record: localStorage.getItem('record') || 0,
     shot: 0,
     hit: 0,
     dead: 0,
@@ -38,13 +41,12 @@ const play = {
         this.render();
     },
     render(){
-        record.textContent = this['record'];
+        record.textContent = this.record;
         shot.textContent = this.shot;
         hit.textContent = this.hit;
         dead.textContent = this.dead;
     },
 };
-
 const show = {
     hit(elem) {
         this.changeClass(elem, 'hit');
@@ -74,28 +76,28 @@ const fire = ({target}) => {
             show.hit(target);
             play.updateData = 'hit';
             ship.hit[idx] = 'x';
-        }
-        const life = ship.hit.indexOf('');
-        console.log(life);
-        if(life < 0){
-            play.updateData = 'dead';
-            for(const id of ship.location){
-                show.dead(document.getElementById(id));
-            }
-        }
-        /*if(ship.hit.every(deck => deck==='x')){
-            play.updateData = 'dead';
-            ship.location.forEach(id => show.dead(document.getElementById(id)));
-            game.shipCount--;
-            if(game.shipCount<1){
-                alert('Game Finish');
-            }
-        }*/
-    });
 
+            if(ship.hit.every(deck => deck==='x')){
+                play.updateData = 'dead';
+                ship.location.forEach(id => show.dead(document.getElementById(id)));
+                game.shipCount--;
+                if(game.shipCount<1){
+                    if(play.shot<play.record || play.record===0){
+                        play.record = play.shot;
+                        play.render();
+                        localStorage.setItem('record', play.shot);
+                    }
+                    const header = document.querySelector('#header');
+                    header.style='color: red';
+                    header.innerHTML='Game Finish';
+                }
+            }
+        }
+    });
 };
 
 const init = () => {
+    play.render();
     enemy.addEventListener('click', fire)
 };
 
